@@ -2,44 +2,35 @@
 
 void
 _PG_init(void) {
-	elog(DEBUG1, "loading DemoPGExtension extension....");
-	
+	elog(DEBUG1, "loading RSKEY extension....");
+	srand(time(NULL) + getpid());
 	_guc_init();
 }
 
-PG_FUNCTION_INFO_V1(get_welcome_message);
+char *
+generate_token(size_t desired_str_length, int collision_sensitivity) {
 
-Datum
-get_welcome_message(PG_FUNCTION_ARGS) {
-	elog(DEBUG1, "Triggered get_welcome_message func");
-	
-	int32 arg = PG_GETARG_INT32(0);
-	int sprintf_output_code = 0;
+	if (likelihood_of_collision(12, 12)) {
+		char *test_key = palloc0(sizeof(char) * desired_str_length);
+		gen_rand_string(test_key, desired_str_length);
+		printf("trying -- %s \r\n", test_key);
+	}
+}
 
-	if (arg < 0)
-		ereport(ERROR,
-				(
-						errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-								errmsg("negative values are not allowed"),
-								errdetail("value %d is negative", arg),
-								errhint("should be positive")
-				)
-		);
+static char *
+gen_rand_string(char *str, size_t size) {
+	if (size) {
+		--size;
+		for (size_t n = 0; n < size; n++) {
+			long key = random() % (int) (sizeof charset - 1);
+			str[n] = charset[key];
+		}
+		str[size] = '\0';
+	}
+	return str;
+}
 
-	char *message_txt = GetConfigOptionByName("demopgextension.message_txt", NULL,
-											  true);
-
-	if (message_txt == NULL)
-		message_txt = "hello";
-
-	char *buffer = palloc0(sizeof(message_txt) + sizeof(arg) + 1);
-	if ((sprintf_output_code = (sprintf(buffer, "%s: %i", message_txt, arg))) < 0)
-		ereport(ERROR,
-				(
-						errcode(ERRCODE_OUT_OF_MEMORY),
-								errmsg("sprintf error: %i", sprintf_output_code)
-				)
-		);
-
-	PG_RETURN_TEXT_P(cstring_to_text(buffer));
+double
+likelihood_of_collision(size_t key_length_count, int record_count) {
+	return (record_count / pow(sizeof(charset), key_length_count)) * 100;
 }
