@@ -1,30 +1,30 @@
-CREATE TYPE rskey;
+CREATE TYPE suuid;
 
-CREATE FUNCTION rskey_in(cstring)
-  RETURNS rskey
-AS '$libdir/rskey'
+CREATE FUNCTION suuid_in(cstring)
+  RETURNS suuid
+AS '$libdir/suuid'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE FUNCTION rskey_out(rskey)
+CREATE FUNCTION suuid_out(suuid)
   RETURNS cstring
-AS '$libdir/rskey'
+AS '$libdir/suuid'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE FUNCTION rskey_recv(internal)
-  RETURNS rskey
-AS '$libdir/rskey'
+CREATE FUNCTION suuid_recv(internal)
+  RETURNS suuid
+AS '$libdir/suuid'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE FUNCTION rskey_send(rskey)
+CREATE FUNCTION suuid_send(suuid)
   RETURNS bytea
-AS '$libdir/rskey'
+AS '$libdir/suuid'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE TYPE rskey (
+CREATE TYPE suuid (
   internallength = VARIABLE,
-  input = rskey_in,
-  output = rskey_out,
-  receive = rskey_recv,
-  send = rskey_send,
+  input = suuid_in,
+  output = suuid_out,
+  receive = suuid_recv,
+  send = suuid_send,
   alignment = 4
 );

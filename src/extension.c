@@ -17,7 +17,7 @@ extern void _PG_init(void);
 
 void
 _PG_init(void) {
-	elog(DEBUG1, "loading RSKEY extension....");
+	elog(DEBUG1, "loading SUUID extension....");
 	srand(time(NULL) + getpid());
 	_guc_init();
 }

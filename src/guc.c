@@ -5,8 +5,8 @@ void _guc_init(void) {
 
 	elog(DEBUG1, "loading GUCs....");
 	
-	DefineCustomStringVariable("rskey.collision_sensitivity",
-							   "grow the key size at this percent chance of colliding random keys",
+	DefineCustomStringVariable("ssuid.min_length",
+							   "min length of key",
 							   NULL,
 							   &pltcl_start_proc,
 							   "20",

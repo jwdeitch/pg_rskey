@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-set(PROJECT_NAME rskey)
+set(PROJECT_NAME suuid)
 set(PROEJCT_VERSION "0.0.1")
 project(${PROJECT_NAME} VERSION ${VERSION} LANGUAGES C)
 
