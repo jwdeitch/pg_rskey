@@ -2,7 +2,7 @@
 # Code modified from:
 # TimescaleDB (https://www.timescale.com/)
 
-comment = 'Random String'
+comment = 'Random String Key'
 default_version = '0.0.1'
 module_pathname = '$libdir/rskey'
 #extension cannot be relocatable once installed because it uses multiple schemas and that is forbidden by PG.
