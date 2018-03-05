@@ -24,17 +24,12 @@ _PG_init(void) {
                          "1234567890"
 
 
-PG_FUNCTION_INFO_V1( id_encode );
 PG_FUNCTION_INFO_V1(suuid_in);
 PG_FUNCTION_INFO_V1(suuid_out);
-PG_FUNCTION_INFO_V1(suuid_recv);
-PG_FUNCTION_INFO_V1(suuid_create);
-PG_FUNCTION_INFO_V1(suuid_embed32);
-PG_FUNCTION_INFO_V1(suuid_embed64);
-PG_FUNCTION_INFO_V1(suuid_send);
 
-Datum id_encode(PG_FUNCTION_ARGS);
+Datum id_encode();
 Datum suuid_in(PG_FUNCTION_ARGS);
+Datum suuid_out(PG_FUNCTION_ARGS);
 
 Datum
 id_encode() {
@@ -47,7 +42,7 @@ id_encode() {
 
 	number = DirectFunctionCall1(nextval, CStringGetTextDatum("suuid_sequence"));
 
-	hashids = hashids_init3(NULL, 5, DEFAULT_ALPHABET);
+	hashids = hashids_init3("", 5, DEFAULT_ALPHABET);
 
 	hash = calloc(hashids_estimate_encoded_size(hashids, 1, &number), 1);
 
@@ -67,5 +62,9 @@ id_encode() {
 Datum
 suuid_in(PG_FUNCTION_ARGS) {
 	return id_encode();
+}
 
+Datum
+suuid_out(PG_FUNCTION_ARGS) {
+	return id_encode();
 }
