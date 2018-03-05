@@ -33,11 +33,12 @@ if (WIN32)
 endif (WIN32)
 
 set(HEADERS
-        extension.h
+        hashids.h
         guc.h
         )
 
 set(SOURCES
+        hashids.c
         extension.c
         guc.c
         )

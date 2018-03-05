@@ -1,5 +1,7 @@
 CREATE TYPE suuid;
 
+CREATE SEQUENCE suuid_sequence;
+
 CREATE FUNCTION suuid_in(cstring)
   RETURNS suuid
 AS '$libdir/suuid'

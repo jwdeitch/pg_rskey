@@ -7,28 +7,37 @@
 #include "utils/builtins.h"
 #include "guc.h"
 #include "hashids.h"
+#include "commands/sequence.h"
+#include "utils/varlena.h"
 
-#ifdef PG_MODULE_MAGIC
 PG_MODULE_MAGIC;
-#endif
 
 extern void _PG_init(void);
-
 
 void
 _PG_init(void) {
 	elog(DEBUG1, "loading SUUID extension....");
-	srand(time(NULL) + getpid());
 	_guc_init();
 }
 
-const char *alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+#define DEFAULT_ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZ" \
+                         "1234567890"
 
 
 PG_FUNCTION_INFO_V1( id_encode );
+PG_FUNCTION_INFO_V1(suuid_in);
+PG_FUNCTION_INFO_V1(suuid_out);
+PG_FUNCTION_INFO_V1(suuid_recv);
+PG_FUNCTION_INFO_V1(suuid_create);
+PG_FUNCTION_INFO_V1(suuid_embed32);
+PG_FUNCTION_INFO_V1(suuid_embed64);
+PG_FUNCTION_INFO_V1(suuid_send);
+
+Datum id_encode(PG_FUNCTION_ARGS);
+Datum suuid_in(PG_FUNCTION_ARGS);
 
 Datum
-id_encode(PG_FUNCTION_ARGS) {
+id_encode() {
 	unsigned long long number;
 	text *hash_string;
 	hashids_t *hashids;
@@ -36,9 +45,9 @@ id_encode(PG_FUNCTION_ARGS) {
 	unsigned int bytes_encoded;
 	char *hash;
 
-	number = PG_GETARG_INT64(0);
+	number = DirectFunctionCall1(nextval, CStringGetTextDatum("suuid_sequence"));
 
-	hashids = hashids_init3(NULL, 5, alphabet);
+	hashids = hashids_init3(NULL, 5, DEFAULT_ALPHABET);
 
 	hash = calloc(hashids_estimate_encoded_size(hashids, 1, &number), 1);
 
@@ -49,7 +58,14 @@ id_encode(PG_FUNCTION_ARGS) {
 	strncpy(VARDATA(hash_string), hash, bytes_encoded);
 
 	hashids_free(hashids);
+	free(hash);
+	
 	PG_RETURN_TEXT_P(hash_string);
 
-	free(hash);
+}
+
+Datum
+suuid_in(PG_FUNCTION_ARGS) {
+	return id_encode();
+
 }
