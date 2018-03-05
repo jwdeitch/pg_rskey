@@ -12,9 +12,15 @@ CREATE FUNCTION suuid_out(suuid)
 AS '$libdir/suuid'
 LANGUAGE C IMMUTABLE STRICT;
 
+CREATE FUNCTION id_encode()
+RETURNS text
+AS '$libdir/suuid'
+LANGUAGE C;
+
 CREATE TYPE suuid (
   internallength = VARIABLE,
   input = suuid_in,
   output = suuid_out,
-  alignment = double
+  alignment = double,
+  default = id_encode
 );

@@ -26,13 +26,14 @@ _PG_init(void) {
 
 PG_FUNCTION_INFO_V1(suuid_in);
 PG_FUNCTION_INFO_V1(suuid_out);
+PG_FUNCTION_INFO_V1(id_encode);
 
-Datum id_encode();
+Datum id_encode(PG_FUNCTION_ARGS);
 Datum suuid_in(PG_FUNCTION_ARGS);
 Datum suuid_out(PG_FUNCTION_ARGS);
 
 Datum
-id_encode() {
+id_encode(PG_FUNCTION_ARGS) {
 	unsigned long long number;
 	text *hash_string;
 	hashids_t *hashids;
@@ -53,18 +54,18 @@ id_encode() {
 	strncpy(VARDATA(hash_string), hash, bytes_encoded);
 
 	hashids_free(hashids);
-	free(hash);
 	
 	PG_RETURN_TEXT_P(hash_string);
 
+	free(hash);
 }
 
 Datum
 suuid_in(PG_FUNCTION_ARGS) {
-	return id_encode();
+	DirectFunctionCall1(id_encode, NULL);
 }
 
 Datum
 suuid_out(PG_FUNCTION_ARGS) {
-	return id_encode();
+	DirectFunctionCall1(id_encode, NULL);
 }

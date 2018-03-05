@@ -7,4 +7,6 @@ create extension suuid;
 begin;
 create table test(id suuid, name text);
 insert into test(name) values ('hello');
-commit;"
+commit;
+--select id_encode();
+"
