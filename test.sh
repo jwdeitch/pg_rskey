@@ -6,7 +6,7 @@ drop extension if exists suuid;
 create extension suuid;
 begin;
 create table test(id suuid, name text);
-insert into test(name) values ('hello');
+insert into test(name) values ('hello'), ('123'), ('world');
 commit;
---select id_encode();
+select * from test;
 "

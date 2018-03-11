@@ -20,13 +20,7 @@ if [ ${BUILD_FORCE_REMOVE} == "true" ]; then
 elif [ -d ${BUILD_DIR} ]; then
     echo "Build system already initialized in ${BUILD_DIR}"
 
-    read  -n 1 -p "Do you want to remove it (this is IMMEDIATE and PERMANENT), y/n? " choice
-    echo ""
-    if [ $choice == "y" ]; then
-        rm -fr ${BUILD_DIR}
-    else
-        exit
-    fi
+    rm -fr ${BUILD_DIR}
 fi
 
 set -e

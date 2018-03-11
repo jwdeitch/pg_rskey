@@ -26,14 +26,14 @@ _PG_init(void) {
 
 PG_FUNCTION_INFO_V1(suuid_in);
 PG_FUNCTION_INFO_V1(suuid_out);
-PG_FUNCTION_INFO_V1(id_encode);
+PG_FUNCTION_INFO_V1(new_suuid);
 
-Datum id_encode(PG_FUNCTION_ARGS);
+Datum new_suuid(PG_FUNCTION_ARGS);
 Datum suuid_in(PG_FUNCTION_ARGS);
 Datum suuid_out(PG_FUNCTION_ARGS);
 
 Datum
-id_encode(PG_FUNCTION_ARGS) {
+new_suuid(PG_FUNCTION_ARGS) {
 	unsigned long long number;
 	text *hash_string;
 	hashids_t *hashids;
@@ -41,7 +41,7 @@ id_encode(PG_FUNCTION_ARGS) {
 	unsigned int bytes_encoded;
 	char *hash;
 
-	number = DirectFunctionCall1(nextval, CStringGetTextDatum("suuid_sequence"));
+	number = DirectFunctionCall1(nextval, CStringGetTextDatum("global_suuid_sequence"));
 
 	hashids = hashids_init3("", 5, DEFAULT_ALPHABET);
 
@@ -54,18 +54,25 @@ id_encode(PG_FUNCTION_ARGS) {
 	strncpy(VARDATA(hash_string), hash, bytes_encoded);
 
 	hashids_free(hashids);
-	
-	PG_RETURN_TEXT_P(hash_string);
 
 	free(hash);
+
+	PG_RETURN_TEXT_P(hash_string);
 }
 
 Datum
 suuid_in(PG_FUNCTION_ARGS) {
-	DirectFunctionCall1(id_encode, NULL);
+	elog(WARNING, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+	elog(WARNING, TextDatumGetCString(DirectFunctionCall1(new_suuid, Int64GetDatum(0))));
+	elog(WARNING, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+	PG_RETURN_TEXT_P(DirectFunctionCall1(new_suuid, Int64GetDatum(0)));
 }
 
 Datum
 suuid_out(PG_FUNCTION_ARGS) {
-	DirectFunctionCall1(id_encode, NULL);
+	text *Complex = (text *) PG_GETARG_POINTER(0);
+	elog(WARNING, "***************");
+	elog(WARNING, TextDatumGetCString(Complex));
+	elog(WARNING, "***************");
+	PG_RETURN_CSTRING(TextDatumGetCString(Complex));
 }
